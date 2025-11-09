@@ -20,4 +20,4 @@ make
 idk
 
 ## Key Takeaways
-idk
+fuck probability
