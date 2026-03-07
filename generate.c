@@ -1,7 +1,5 @@
 #include "generate.h"
 
-// todo reimplement with potentially more efficient radix/patricia trie
-
 int main(int argc, char* argv[]) 
 {
     srand(time(NULL));
@@ -26,7 +24,7 @@ int main(int argc, char* argv[])
 // markov model represented using a hash table
 HashTable* create_markov_model(char* filename, int order)
 {
-    HashTable* model = LibHashTable.create(STRING, 100, sizeof(MarkovState));
+    HashTable* model = LibHashTable.create(STRING, 100, sizeof(MarkovState), _free_markov_state);
     size_t tokenCount = 0;
     char** tokens = _generate_tokens(filename, &tokenCount);
     _generate_ngrams(model, (const char**)tokens, tokenCount, order);
@@ -159,7 +157,7 @@ int _generate_ngrams(HashTable* model, const char** tokens, size_t tokenCount, i
             }
         }   
     }
-    // normalise probabilities 
+
     _normalise_probabilities(model);
     LibHashTable.print_keys(model, _print_markov_state);
     return ngramCount;
@@ -212,7 +210,7 @@ int generate_text(HashTable* model, int ascii, int order, int wordCount, int tru
     while (1)
     {
         char c = currentNgram[strlen(currentNgram) - 1];
-        if (generatedCount >= wordCount && (truncate || ( c == '.' || c == '?' || c == "!")))
+        if (generatedCount >= wordCount && (truncate || ( c == '.' || c == '?' || c == '!')))
         {
             break;
         }
